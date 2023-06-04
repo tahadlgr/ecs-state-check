@@ -1,4 +1,3 @@
 1) AWS events comes to default event bus. We defined a rule and a role to catch the indicated events. This definitions should be in all accounts which you want to observe. The file under cross-account-permissions folder should be added to all accounts and other files should be added to monitoring account.
 2) Gave our custom bus as a target for other event busses (in aws_cloudwatch_event_target). Also, our custom bus calls own target (lambda function).
-3) If any ECS task shuts down suddenly, lambda function checks the cases. If this is an unexpected situation, sends alert to slack channel.
-4) This alert includes all the necessary informations to debug the issue.
+3) If any ECS task shuts down suddenly, lambda function checks the cases. If this is an unexpected situation, sends all the necessary informations to slack channel.
