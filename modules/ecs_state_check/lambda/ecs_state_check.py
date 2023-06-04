@@ -8,32 +8,7 @@ import urllib3
 
 
 def lambda_handler(event, context):
-
-    try:
-
-        event_as_string = json.dumps(event)
-        formatted_event = {
-            "blocks": [
-                {
-                    "type": "section",
-                    "text": {"type": "mrkdwn", "text": f"{event_as_string}"},
-                },
-                {"type": "divider"},
-            ]
-        }
-
-        http = urllib3.PoolManager()
-        r2 = http.request(
-            "POST",
-            "https://hooks.slack.com/services/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",
-            body=json.dumps(formatted_event),
-            headers={"Content-Type": "event/json"},
-        )
-        print(r2.read())
-
-    except Exception as e:
-        raise e
-
+    
     main_account_id = boto3.client("sts").get_caller_identity().get("Account").strip()
     account_id = event["account"]
     account_alias = (
@@ -44,7 +19,7 @@ def lambda_handler(event, context):
     )
 
     account_alias_formatter = account_alias.split("-")
-    if account_alias_formatter[0] == "lifemote":
+    if account_alias_formatter[0] == "add-variable":
         del account_alias_formatter[0]
         account_alias = "-".join(account_alias_formatter)
 
