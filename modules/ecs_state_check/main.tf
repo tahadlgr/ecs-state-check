@@ -148,28 +148,12 @@ data "aws_iam_policy_document" "lambda_policy" {
   statement {
     effect = "Allow"
     actions = [
-      "ecs:DescribeTasks",
-      "iam:ListAccountAliases",
-      "organizations:ListAccounts",
-      "organizations:DescribeAccount"
+      "cloudwatch:DescribeAlarms",
+      "iam:ListAccountAliases"
     ]
     resources = ["*"]
   }
 
-  statement {
-    effect = "Allow"
-    actions = [
-      "logs:CreateLogStream",
-      "logs:PutLogEvents"
-    ]
-    resources = ["${aws_cloudwatch_log_group.this.arn}:*"]
-  }
-
-  statement {
-    effect    = "Allow"
-    actions   = ["sts:AssumeRole"]
-    resources = [for account_id in var.all_account_ids : "arn:aws:iam::${account_id}:role/ecs-api-access-cross-account-role"]
-  }
 }
 
 resource "aws_iam_role_policy" "lambda_policy" {

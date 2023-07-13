@@ -8,7 +8,30 @@ import urllib3
 
 
 def lambda_handler(event, context):
-    
+    try:
+        event_as_string = json.dumps(event)
+        formatted_event = {
+            "blocks": [
+                {
+                    "type": "section",
+                    "text": {"type": "mrkdwn", "text": f"{event_as_string}"},
+                },
+                {"type": "divider"},
+            ]
+        }
+
+        http = urllib3.PoolManager()
+        r2 = http.request(
+            "POST",
+            "https://hooks.slack.com/services/complete-with-your-webhook-url",
+            body=json.dumps(formatted_event),
+            headers={"Content-Type": "event/json"},
+        )
+        print(r2.read())
+
+    except Exception as e:
+        raise e
+
     main_account_id = boto3.client("sts").get_caller_identity().get("Account").strip()
     account_id = event["account"]
     account_alias = (
@@ -19,7 +42,7 @@ def lambda_handler(event, context):
     )
 
     account_alias_formatter = account_alias.split("-")
-    if account_alias_formatter[0] == "add-variable":
+    if account_alias_formatter[0] == "lifemote":
         del account_alias_formatter[0]
         account_alias = "-".join(account_alias_formatter)
 
@@ -82,7 +105,7 @@ def lambda_handler(event, context):
     if (
         (task_last_status == "STOPPING" and task_health_status == "UNHEALTHY")
         or (
-            task_last_status == "STOPPING"
+            (task_last_status == "STOPPING" or task_last_status == "STOPPED")
             and (
                 container_exit_code != 0
                 and container_exit_code != 143
@@ -100,7 +123,6 @@ def lambda_handler(event, context):
         if "(deployment" not in stopped_reason_as_list and (
             account_alias != "test" and account_alias != "staging"
         ):
-
             try:
                 print(event)
                 send_slack_notification(
