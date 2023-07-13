@@ -143,19 +143,6 @@ resource "aws_iam_role" "this" {
   assume_role_policy = data.aws_iam_policy_document.lambda_assume.json
 }
 
-
-data "aws_iam_policy_document" "lambda_policy" {
-  statement {
-    effect = "Allow"
-    actions = [
-      "cloudwatch:DescribeAlarms",
-      "iam:ListAccountAliases"
-    ]
-    resources = ["*"]
-  }
-
-}
-
 data "aws_iam_policy_document" "lambda_policy" {
   statement {
     effect = "Allow"
