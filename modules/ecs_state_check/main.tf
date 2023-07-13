@@ -171,6 +171,12 @@ data "aws_iam_policy_document" "lambda_policy" {
   }
 }
 
+resource "aws_iam_role_policy" "lambda_policy" {
+  name   = "ecs-sc-policy"
+  role   = aws_iam_role.this.name
+  policy = data.aws_iam_policy_document.lambda_policy.json
+}
+
 # Lambda
 resource "aws_lambda_function" "this" {
   filename         = data.archive_file.this.output_path
